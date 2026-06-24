@@ -143,89 +143,98 @@ function recopilarDatos() {
 }
 
 /* ============================================================
-   1) GENERAR CONTRATO -> DESCARGA WORD (.doc)
+   FORMATEO DE FECHAS PARA LA PLANTILLA
    ============================================================ */
-function escapeHtml(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+// "2026-06-30" -> "30 de junio de 2026"
+function fechaLarga(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return "";
+  return `${d} de ${MESES[m - 1]} de ${y}`;
 }
 
-function construirDocumentoWord(d) {
-  const actividades = Array.isArray(d.actividades_principales)
-    ? d.actividades_principales.map(a => `<li>${escapeHtml(a)}</li>`).join("")
-    : "";
-
-  return `<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8">
-<style>
-  body { font-family: 'Times New Roman', serif; font-size: 12pt; color: #000; }
-  h1 { font-size: 14pt; text-align: center; }
-  h2 { font-size: 12pt; }
-  p { text-align: justify; }
-  .label { font-weight: bold; }
-</style>
-</head>
-<body>
-  <h1>CONTRATO DE PRESTACIÓN DE SERVICIOS N° ${escapeHtml(d.numero_contrato)}</h1>
-
-  <p>En la ciudad, a los ${escapeHtml(d.fecha_firma_letras)}, se celebra el presente
-  contrato entre la EMPRESA DE PARQUES Y EVENTOS DE ANTIOQUIA — ACTIVA y el(la)
-  contratista <span class="label">${escapeHtml(d.nombre_contratista)}</span>,
-  identificado(a) con cédula de ciudadanía N° ${escapeHtml(d.cedula_contratista)}
-  expedida en ${escapeHtml(d.ciudad_expedicion_cc)}, correo electrónico
-  ${escapeHtml(d.email_contratista)}.</p>
-
-  <h2>PRIMERA. OBJETO</h2>
-  <p>${escapeHtml(d.objeto_contrato)}</p>
-
-  <h2>SEGUNDA. ACTIVIDADES</h2>
-  <ol>${actividades}</ol>
-
-  <h2>TERCERA. VALOR Y FORMA DE PAGO</h2>
-  <p>El valor total del contrato es de
-  $${Number(d.valor_total_numero).toLocaleString("es-CO")}
-  (${escapeHtml(d.valor_total_letras)}), pagaderos en mensualidades de
-  $${Number(d.valor_mensual_numero).toLocaleString("es-CO")}
-  (${escapeHtml(d.valor_mensual_letras)}).</p>
-
-  <h2>CUARTA. PLAZO</h2>
-  <p>${escapeHtml(d.plazo_texto)} Fecha de terminación: ${escapeHtml(d.fecha_terminacion)}.</p>
-
-  <h2>QUINTA. MARCO NORMATIVO Y PRESUPUESTAL</h2>
-  <p>Resolución N° ${escapeHtml(d.resolucion_numero)} del ${escapeHtml(d.resolucion_fecha)}.
-  CDP N° ${escapeHtml(d.cdp_numero)} del ${escapeHtml(d.cdp_fecha)}.
-  CRP N° ${escapeHtml(d.crp_numero)} del ${escapeHtml(d.crp_fecha)}.</p>
-
-  <h2>SEXTA. SUPERVISIÓN</h2>
-  <p>La supervisión estará a cargo de ${escapeHtml(d.supervisor_nombre)},
-  en su calidad de ${escapeHtml(d.supervisor_cargo)}.</p>
-
-  <br><br>
-  <p>_____________________________<br>${escapeHtml(d.nombre_contratista)}<br>Contratista</p>
-</body>
-</html>`;
+// "2026-01-02" -> "02/01/2026"
+function fechaCorta(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return "";
+  return `${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}/${y}`;
 }
 
-function generarWord() {
+/* ============================================================
+   DATOS PARA LA PLANTILLA WORD (marcadores {campo})
+   ============================================================ */
+function datosPlantilla() {
+  const d = recopilarDatos();
+  const fmt = n => Number(n).toLocaleString("es-CO");
+
+  return {
+    numero_contrato: d.numero_contrato || "",
+    nombre_contratista: d.nombre_contratista || "",
+    cedula_contratista: d.cedula_contratista || "",
+    email_contratista: d.email_contratista || "",
+    objeto_contrato: `“${d.objeto_contrato || ""}"`,
+    alcance: d.alcance || "",
+    actividades_principales: Array.isArray(d.actividades_principales)
+      ? d.actividades_principales.join("\n") : "",
+    valor_total_texto: `${d.valor_total_letras} ($${fmt(d.valor_total_numero)})`,
+    valor_mensual_texto: `${d.valor_mensual_letras} ($${fmt(d.valor_mensual_numero)})`,
+    plazo_texto: (d.plazo_texto || "").toUpperCase(),
+    fecha_terminacion_texto: fechaLarga(d.fecha_terminacion),
+    fecha_firma_letras: d.fecha_firma_letras || "",
+    presupuesto_texto:
+      `Certificado de Disponibilidad Presupuestal No ${d.cdp_numero} del ${fechaCorta(d.cdp_fecha)} ` +
+      `y Certificado de Registro Presupuestal No ${d.crp_numero} del ${fechaCorta(d.crp_fecha)}.`
+  };
+}
+
+/* ============================================================
+   1) GENERAR CONTRATO -> RELLENA LA PLANTILLA Y DESCARGA (.docx)
+   ============================================================ */
+const PLANTILLA_URL = "plantilla_contrato.docx";
+
+async function generarWord() {
   if (!form.reportValidity()) return;
 
-  const data = recopilarDatos();
-  const html = construirDocumentoWord(data);
-  const blob = new Blob(["﻿", html], { type: "application/msword" });
+  const Docx = window.docxtemplater || window.Docxtemplater;
+  if (!window.PizZip || !Docx) {
+    mostrarMensaje("err", "❌ No se cargaron las librerías para generar el Word. Revisa tu conexión.");
+    return;
+  }
 
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `Contrato_${(data.numero_contrato || "ACTIVA").replace(/\s+/g, "_")}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  mostrarMensaje("ok", "⏳ Generando contrato…");
 
-  mostrarMensaje("ok", "📄 Contrato (Word) generado. Revísalo, fírmalo y guárdalo como PDF para cargarlo.");
+  try {
+    const resp = await fetch(PLANTILLA_URL);
+    if (!resp.ok) throw new Error("No se encontró la plantilla (" + resp.status + ")");
+    const buffer = await resp.arrayBuffer();
+
+    const zip = new window.PizZip(buffer);
+    const doc = new Docx(zip, { paragraphLoop: true, linebreaks: true });
+    doc.render(datosPlantilla());
+
+    const blob = doc.getZip().generate({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    });
+
+    const numero = ($("numero_contrato").value || "ACTIVA").replace(/\s+/g, "_");
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Contrato_${numero}.docx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    mostrarMensaje("ok", "📄 Contrato (Word) generado. Revísalo, fírmalo y guárdalo como PDF para cargarlo.");
+  } catch (err) {
+    const detalle = err.properties && err.properties.errors
+      ? err.properties.errors.map(e => e.properties.explanation).join("; ")
+      : err.message;
+    mostrarMensaje("err", "❌ Error al generar el contrato: " + detalle);
+  }
 }
 
 form.addEventListener("submit", (e) => {
