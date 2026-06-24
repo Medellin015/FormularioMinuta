@@ -3,376 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador de Contrato - ACTIVA</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #f4f6f9;
-    margin: 0;
-    padding: 20px;
-    color: #2c3e50;
-  }
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  }
-  h1 {
-    color: #1a4d8f;
-    border-bottom: 3px solid #1a4d8f;
-    padding-bottom: 10px;
-    margin-top: 0;
-  }
-  h2 {
-    color: #1a4d8f;
-    font-size: 1.1em;
-    margin-top: 30px;
-    border-left: 4px solid #1a4d8f;
-    padding-left: 10px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-  }
-  .full { grid-column: 1 / -1; }
-  label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 0.9em;
-    color: #34495e;
-  }
-  input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #cbd5e0;
-    border-radius: 6px;
-    font-size: 0.95em;
-    font-family: inherit;
-    transition: border-color 0.2s;
-  }
-  input:focus, textarea:focus {
-    outline: none;
-    border-color: #1a4d8f;
-    box-shadow: 0 0 0 3px rgba(26,77,143,0.1);
-  }
-  textarea { resize: vertical; min-height: 80px; }
-  .preview {
-    background: #eef4fb;
-    border-left: 4px solid #1a4d8f;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 0.85em;
-    color: #1a4d8f;
-    margin-top: 5px;
-    font-style: italic;
-    min-height: 20px;
-  }
-  button {
-    background: #1a4d8f;
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    font-size: 1em;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 25px;
-    width: 100%;
-    transition: background 0.2s;
-  }
-  button:hover { background: #143a6b; }
-  button:disabled { background: #95a5a6; cursor: not-allowed; }
-  #mensaje {
-    margin-top: 20px;
-    padding: 12px;
-    border-radius: 6px;
-    display: none;
-    font-weight: 500;
-  }
-  .ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-  .err { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-</style>
+<title>Generador de Contrato — ACTIVA</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="container">
-  <h1>📄 Generador de Contrato — ACTIVA</h1>
+  <header class="header">
+    <h1>📄 Generador de Contrato</h1>
+    <p>Empresa de Parques y Eventos de Antioquia — ACTIVA</p>
+  </header>
+
   <form id="contratoForm">
 
-    <h2>1. Datos básicos del contrato</h2>
-    <div class="grid">
-      <div>
-        <label for="numero_contrato">Número de contrato</label>
-        <input type="text" id="numero_contrato" name="numero_contrato" placeholder="PS002-2026" required>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">1</span> Datos básicos del contrato</legend>
+      <div class="grid">
+        <div>
+          <label for="numero_contrato">Número de contrato</label>
+          <input type="text" id="numero_contrato" name="numero_contrato" placeholder="Ej: PS002-2026" required>
+        </div>
+        <div>
+          <label for="fecha_firma_numero">Fecha de firma</label>
+          <input type="date" id="fecha_firma_numero" name="fecha_firma_numero" required>
+          <div class="preview" id="prev_fecha_firma">Vista previa en letras…</div>
+        </div>
       </div>
-      <div>
-        <label for="fecha_firma_numero">Fecha de firma</label>
-        <input type="date" id="fecha_firma_numero" name="fecha_firma_numero" required>
-        <div class="preview" id="prev_fecha_firma">Vista previa en letras…</div>
-      </div>
-    </div>
+    </fieldset>
 
-    <h2>2. Datos del contratista</h2>
-    <div class="grid">
-      <div class="full">
-        <label for="nombre_contratista">Nombre completo del contratista</label>
-        <input type="text" id="nombre_contratista" name="nombre_contratista" placeholder="MARIANA ZAPATA OCHOA" required>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">2</span> Datos del contratista</legend>
+      <div class="grid">
+        <div class="full">
+          <label for="nombre_contratista">Nombre completo del contratista</label>
+          <input type="text" id="nombre_contratista" name="nombre_contratista" placeholder="Ej: Mariana Zapata Ochoa" required>
+        </div>
+        <div>
+          <label for="cedula_contratista">Cédula</label>
+          <input type="text" id="cedula_contratista" name="cedula_contratista" placeholder="Ej: 1.017.222.594" required>
+        </div>
+        <div>
+          <label for="ciudad_expedicion_cc">Ciudad de expedición</label>
+          <input type="text" id="ciudad_expedicion_cc" name="ciudad_expedicion_cc" placeholder="Ej: Medellín" required>
+        </div>
+        <div class="full">
+          <label for="email_contratista">Correo electrónico</label>
+          <input type="email" id="email_contratista" name="email_contratista" placeholder="correo@dominio.com" required>
+        </div>
       </div>
-      <div>
-        <label for="cedula_contratista">Cédula</label>
-        <input type="text" id="cedula_contratista" name="cedula_contratista" placeholder="1.017.222.594" required>
-      </div>
-      <div>
-        <label for="ciudad_expedicion_cc">Ciudad de expedición</label>
-        <input type="text" id="ciudad_expedicion_cc" name="ciudad_expedicion_cc" placeholder="Medellín" required>
-      </div>
-      <div class="full">
-        <label for="email_contratista">Correo electrónico</label>
-        <input type="email" id="email_contratista" name="email_contratista" placeholder="correo@dominio.com" required>
-      </div>
-    </div>
+    </fieldset>
 
-    <h2>3. Objeto y actividades</h2>
-    <div class="grid">
-      <div class="full">
-        <label for="objeto_contrato">Objeto del contrato</label>
-        <textarea id="objeto_contrato" name="objeto_contrato" required>PRESTACIÓN DE SERVICIOS PROFESIONALES PARA EL DESARROLLO Y EJECUCIÓN DE LAS ACTIVIDADES DEL ÁREA COMERCIAL EN LA EMPRESA DE PARQUES Y EVENTOS DE ANTIOQUIA – ACTIVA.</textarea>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">3</span> Objeto y actividades</legend>
+      <div class="grid">
+        <div class="full">
+          <label for="objeto_contrato">Objeto del contrato</label>
+          <textarea id="objeto_contrato" name="objeto_contrato" placeholder="Describe el objeto del contrato…" required></textarea>
+        </div>
+        <div class="full">
+          <label for="actividades_principales">Principales actividades (una por línea)</label>
+          <textarea id="actividades_principales" name="actividades_principales" rows="8" placeholder="1. Primera actividad&#10;2. Segunda actividad&#10;3. Tercera actividad" required></textarea>
+        </div>
       </div>
-      <div class="full">
-        <label for="actividades_principales">Principales actividades (una por línea)</label>
-        <textarea id="actividades_principales" name="actividades_principales" rows="8" required>1. Apoyo en la ejecución de los contratos interadministrativos...
-2. Solicitar a los proveedores las facturas...
-3. Apoyar la realización de informes técnicos y financieros...
-4. Garantizar la actualización de expedientes contractuales...
-5. Apoyar la liquidación de contratos...
-6. Apoyar la consolidación de rendición ante entes de control.
-7. Realizar las demás actividades que designe el supervisor.
-8. Apoyo a la supervisión de los contratos asignados.</textarea>
-      </div>
-    </div>
+    </fieldset>
 
-    <h2>4. Valor y forma de pago</h2>
-    <div class="grid">
-      <div>
-        <label for="valor_total_numero">Valor total (número)</label>
-        <input type="number" id="valor_total_numero" name="valor_total_numero" placeholder="29580000" min="0" required>
-        <div class="preview" id="prev_valor_total">Vista previa en letras…</div>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">4</span> Valor y forma de pago</legend>
+      <div class="grid">
+        <div>
+          <label for="valor_total_numero">Valor total (número)</label>
+          <input type="number" id="valor_total_numero" name="valor_total_numero" placeholder="Ej: 29580000" min="0" required>
+          <div class="preview" id="prev_valor_total">Vista previa en letras…</div>
+        </div>
+        <div>
+          <label for="valor_mensual_numero">Valor mensual (número)</label>
+          <input type="number" id="valor_mensual_numero" name="valor_mensual_numero" placeholder="Ej: 5100000" min="0" required>
+          <div class="preview" id="prev_valor_mensual">Vista previa en letras…</div>
+        </div>
       </div>
-      <div>
-        <label for="valor_mensual_numero">Valor mensual (número)</label>
-        <input type="number" id="valor_mensual_numero" name="valor_mensual_numero" placeholder="5100000" min="0" required>
-        <div class="preview" id="prev_valor_mensual">Vista previa en letras…</div>
-      </div>
-    </div>
+    </fieldset>
 
-    <h2>5. Plazo</h2>
-    <div class="grid">
-      <div class="full">
-        <label for="plazo_texto">Plazo (texto completo)</label>
-        <input type="text" id="plazo_texto" name="plazo_texto" placeholder="Desde la suscripción del acta de inicio, hasta el 30 de junio de 2026." required>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">5</span> Plazo</legend>
+      <div class="grid">
+        <div class="full">
+          <label for="plazo_texto">Plazo (texto completo)</label>
+          <input type="text" id="plazo_texto" name="plazo_texto" placeholder="Ej: Desde la suscripción del acta de inicio, hasta el 30 de junio de 2026." required>
+        </div>
+        <div>
+          <label for="fecha_terminacion">Fecha de terminación</label>
+          <input type="date" id="fecha_terminacion" name="fecha_terminacion" required>
+        </div>
       </div>
-      <div>
-        <label for="fecha_terminacion">Fecha de terminación</label>
-        <input type="date" id="fecha_terminacion" name="fecha_terminacion" required>
-      </div>
-    </div>
+    </fieldset>
 
-    <h2>6. Marco normativo y presupuestal</h2>
-    <div class="grid">
-      <div>
-        <label for="resolucion_numero">Resolución N°</label>
-        <input type="text" id="resolucion_numero" name="resolucion_numero" placeholder="202505000025" required>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">6</span> Marco normativo y presupuestal</legend>
+      <div class="grid">
+        <div>
+          <label for="resolucion_numero">Resolución N°</label>
+          <input type="text" id="resolucion_numero" name="resolucion_numero" placeholder="Ej: 202505000025" required>
+        </div>
+        <div>
+          <label for="resolucion_fecha">Fecha de la resolución</label>
+          <input type="date" id="resolucion_fecha" name="resolucion_fecha" required>
+        </div>
+        <div>
+          <label for="cdp_numero">CDP N°</label>
+          <input type="text" id="cdp_numero" name="cdp_numero" placeholder="Ej: 004-2026" required>
+        </div>
+        <div>
+          <label for="cdp_fecha">Fecha CDP</label>
+          <input type="date" id="cdp_fecha" name="cdp_fecha" required>
+        </div>
+        <div>
+          <label for="crp_numero">CRP N°</label>
+          <input type="text" id="crp_numero" name="crp_numero" placeholder="Ej: 006-2026" required>
+        </div>
+        <div>
+          <label for="crp_fecha">Fecha CRP</label>
+          <input type="date" id="crp_fecha" name="crp_fecha" required>
+        </div>
       </div>
-      <div>
-        <label for="resolucion_fecha">Fecha de la resolución</label>
-        <input type="date" id="resolucion_fecha" name="resolucion_fecha" required>
-      </div>
-      <div>
-        <label for="cdp_numero">CDP N°</label>
-        <input type="text" id="cdp_numero" name="cdp_numero" placeholder="004-2026" required>
-      </div>
-      <div>
-        <label for="cdp_fecha">Fecha CDP</label>
-        <input type="date" id="cdp_fecha" name="cdp_fecha" required>
-      </div>
-      <div>
-        <label for="crp_numero">CRP N°</label>
-        <input type="text" id="crp_numero" name="crp_numero" placeholder="006-2026" required>
-      </div>
-      <div>
-        <label for="crp_fecha">Fecha CRP</label>
-        <input type="date" id="crp_fecha" name="crp_fecha" required>
-      </div>
-    </div>
+    </fieldset>
 
-    <h2>7. Supervisión</h2>
-    <div class="grid">
-      <div>
-        <label for="supervisor_nombre">Nombre del supervisor</label>
-        <input type="text" id="supervisor_nombre" name="supervisor_nombre" placeholder="DAVID CASTAÑEDA VILLEGAS" required>
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">7</span> Supervisión</legend>
+      <div class="grid">
+        <div>
+          <label for="supervisor_nombre">Nombre del supervisor</label>
+          <input type="text" id="supervisor_nombre" name="supervisor_nombre" placeholder="Ej: David Castañeda Villegas" required>
+        </div>
+        <div>
+          <label for="supervisor_cargo">Cargo del supervisor</label>
+          <input type="text" id="supervisor_cargo" name="supervisor_cargo" placeholder="Ej: Gestor Comercial" required>
+        </div>
       </div>
-      <div>
-        <label for="supervisor_cargo">Cargo del supervisor</label>
-        <input type="text" id="supervisor_cargo" name="supervisor_cargo" placeholder="Gestor Comercial" required>
-      </div>
-    </div>
+    </fieldset>
 
-    <button type="submit" id="btnEnviar">🚀 Generar contrato</button>
+    <div class="actions">
+      <button type="submit" id="btnEnviar">🚀 Generar contrato</button>
+    </div>
     <div id="mensaje"></div>
   </form>
 </div>
 
-<script>
-  // 🔧 Reemplaza con la URL HTTP POST del trigger de Power Automate
-  const POWER_AUTOMATE_URL = "https://prod-XX.westus.logic.azure.com:443/workflows/XXXXXXXX/triggers/manual/paths/invoke?api-version=...";
-
-  /* ============================================================
-     CONVERSOR: NÚMERO A LETRAS (PESOS COLOMBIANOS)
-     ============================================================ */
-  const UNIDADES = ["", "UN", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE",
-                    "DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE", "DIECISÉIS",
-                    "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE"];
-  const DECENAS = ["", "", "VEINTI", "TREINTA", "CUARENTA", "CINCUENTA",
-                   "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
-  const CENTENAS = ["", "CIENTO", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS",
-                    "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
-
-  function centenaALetras(n) {
-    if (n === 0) return "";
-    if (n === 100) return "CIEN";
-    let c = Math.floor(n / 100);
-    let resto = n % 100;
-    let txt = CENTENAS[c];
-    if (resto > 0) txt += (txt ? " " : "") + decenaALetras(resto);
-    return txt.trim();
-  }
-
-  function decenaALetras(n) {
-    if (n <= 20) return UNIDADES[n];
-    if (n < 30) {
-      let u = n - 20;
-      return u === 0 ? "VEINTE" : "VEINTI" + UNIDADES[u].toLowerCase().toUpperCase();
-    }
-    let d = Math.floor(n / 10);
-    let u = n % 10;
-    return DECENAS[d] + (u > 0 ? " Y " + UNIDADES[u] : "");
-  }
-
-  function numeroALetras(num) {
-    num = Math.floor(Math.abs(Number(num)));
-    if (isNaN(num)) return "";
-    if (num === 0) return "CERO PESOS M/L";
-
-    let millones = Math.floor(num / 1000000);
-    let miles = Math.floor((num % 1000000) / 1000);
-    let resto = num % 1000;
-
-    let partes = [];
-
-    if (millones > 0) {
-      if (millones === 1) partes.push("UN MILLÓN");
-      else partes.push(centenaALetras(millones) + " MILLONES");
-    }
-    if (miles > 0) {
-      if (miles === 1) partes.push("MIL");
-      else partes.push(centenaALetras(miles) + " MIL");
-    }
-    if (resto > 0) partes.push(centenaALetras(resto));
-
-    return partes.join(" ").replace(/\s+/g, " ").trim() + " PESOS M/L";
-  }
-
-  /* ============================================================
-     CONVERSOR: FECHA A LETRAS (es-CO)  -> "seis (06) días del mes de enero de 2026"
-     ============================================================ */
-  const DIAS_TEXTO = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO",
-    "NUEVE", "DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE", "DIECISÉIS",
-    "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE", "VEINTIUNO", "VEINTIDÓS",
-    "VEINTITRÉS", "VEINTICUATRO", "VEINTICINCO", "VEINTISÉIS", "VEINTISIETE",
-    "VEINTIOCHO", "VEINTINUEVE", "TREINTA", "TREINTA Y UNO"];
-  const MESES = ["enero","febrero","marzo","abril","mayo","junio",
-                 "julio","agosto","septiembre","octubre","noviembre","diciembre"];
-
-  function fechaALetras(isoDate) {
-    if (!isoDate) return "";
-    const [y, m, d] = isoDate.split("-").map(Number);
-    if (!y || !m || !d) return "";
-    const diaTexto = DIAS_TEXTO[d].toLowerCase();
-    const diaNum = String(d).padStart(2, "0");
-    return `${diaTexto} (${diaNum}) días del mes de ${MESES[m-1]} de ${y}`;
-  }
-
-  /* ============================================================
-     EVENTOS DE VISTA PREVIA
-     ============================================================ */
-  const $ = id => document.getElementById(id);
-
-  function actualizarValor(idInput, idPrev) {
-    const v = $(idInput).value;
-    $(idPrev).textContent = v ? numeroALetras(v) : "Vista previa en letras…";
-  }
-  function actualizarFecha(idInput, idPrev) {
-    const v = $(idInput).value;
-    $(idPrev).textContent = v ? fechaALetras(v) : "Vista previa en letras…";
-  }
-
-  $("valor_total_numero").addEventListener("input", () => actualizarValor("valor_total_numero","prev_valor_total"));
-  $("valor_mensual_numero").addEventListener("input", () => actualizarValor("valor_mensual_numero","prev_valor_mensual"));
-  $("fecha_firma_numero").addEventListener("input", () => actualizarFecha("fecha_firma_numero","prev_fecha_firma"));
-
-  /* ============================================================
-     ENVÍO A POWER AUTOMATE
-     ============================================================ */
-  const form = $("contratoForm");
-  const mensaje = $("mensaje");
-  const btn = $("btnEnviar");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    btn.disabled = true;
-    btn.textContent = "Enviando...";
-    mensaje.style.display = "none";
-
-    const data = Object.fromEntries(new FormData(form).entries());
-
-    // Conversiones automáticas
-    data.valor_total_numero   = Number(data.valor_total_numero);
-    data.valor_mensual_numero = Number(data.valor_mensual_numero);
-    data.valor_total_letras   = numeroALetras(data.valor_total_numero);
-    data.valor_mensual_letras = numeroALetras(data.valor_mensual_numero);
-    data.fecha_firma_letras   = fechaALetras(data.fecha_firma_numero);
-
-    // Convertir actividades a array
-    if (data.actividades_principales) {
-      data.actividades_principales = data.actividades_principales
-        .split("\n").map(s => s.trim()).filter(s => s.length > 0);
-    }
-
-    try {
-      const resp = await fetch(POWER_AUTOMATE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-
-      mensaje.className = "ok";
-      mensaje.textContent = "✅ Contrato enviado correctamente a Power Automate.";
-      mensaje.style.display = "block";
-    } catch (err) {
-      mensaje.className = "err";
-      mensaje.textContent = "❌ Error al enviar: " + err.message;
-      mensaje.style.display = "block";
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "🚀 Generar contrato";
-    }
-  });
-</script>
+<script src="app.js"></script>
 </body>
 </html>
