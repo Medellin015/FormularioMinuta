@@ -166,6 +166,9 @@ textarea {
    ============================================================ */
 .actions {
   margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 button {
@@ -178,12 +181,29 @@ button {
   border-radius: var(--radius-sm);
   cursor: pointer;
   width: 100%;
-  transition: background 0.2s, transform 0.05s;
+  transition: background 0.2s, transform 0.05s, opacity 0.2s;
 }
 
 button:hover { background: var(--brand-dark); }
 button:active { transform: translateY(1px); }
-button:disabled { background: #95a5a6; cursor: not-allowed; }
+button:disabled { background: #95a5a6; cursor: not-allowed; opacity: 0.7; }
+
+.btn-secondary {
+  background: #fff;
+  color: var(--brand);
+  border: 2px solid var(--brand);
+}
+.btn-secondary:hover { background: var(--brand-light); }
+
+.btn-success { background: #1e8449; }
+.btn-success:hover { background: #166638; }
+
+.file-info {
+  font-size: 0.85em;
+  color: var(--text-soft);
+  text-align: center;
+  min-height: 18px;
+}
 
 /* ============================================================
    MENSAJE DE ESTADO
