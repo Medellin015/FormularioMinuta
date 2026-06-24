@@ -101,18 +101,29 @@ $("valor_mensual_numero").addEventListener("input", () => actualizarValor("valor
 $("fecha_firma_numero").addEventListener("input", () => actualizarFecha("fecha_firma_numero", "prev_fecha_firma"));
 
 /* ============================================================
-   ENVÍO A POWER AUTOMATE
+   REFERENCIAS Y ESTADO
    ============================================================ */
 const form = $("contratoForm");
 const mensaje = $("mensaje");
-const btn = $("btnEnviar");
+const btnEnviar = $("btnEnviar");
+const inputArchivo = $("archivoContrato");
+const btnCargar = $("btnCargar");
+const archivoInfo = $("archivoInfo");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  btn.disabled = true;
-  btn.textContent = "Enviando...";
-  mensaje.style.display = "none";
+// PDF cargado por el usuario (firmado)
+let pdfBase64 = null;
+let pdfNombre = null;
 
+function mostrarMensaje(tipo, texto) {
+  mensaje.className = tipo;
+  mensaje.textContent = texto;
+  mensaje.style.display = "block";
+}
+
+/* ============================================================
+   RECOPILAR DATOS DEL FORMULARIO
+   ============================================================ */
+function recopilarDatos() {
   const data = Object.fromEntries(new FormData(form).entries());
 
   // Conversiones automáticas
@@ -128,6 +139,146 @@ form.addEventListener("submit", async (e) => {
       .split("\n").map(s => s.trim()).filter(s => s.length > 0);
   }
 
+  return data;
+}
+
+/* ============================================================
+   1) GENERAR CONTRATO -> DESCARGA WORD (.doc)
+   ============================================================ */
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function construirDocumentoWord(d) {
+  const actividades = Array.isArray(d.actividades_principales)
+    ? d.actividades_principales.map(a => `<li>${escapeHtml(a)}</li>`).join("")
+    : "";
+
+  return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8">
+<style>
+  body { font-family: 'Times New Roman', serif; font-size: 12pt; color: #000; }
+  h1 { font-size: 14pt; text-align: center; }
+  h2 { font-size: 12pt; }
+  p { text-align: justify; }
+  .label { font-weight: bold; }
+</style>
+</head>
+<body>
+  <h1>CONTRATO DE PRESTACIÓN DE SERVICIOS N° ${escapeHtml(d.numero_contrato)}</h1>
+
+  <p>En la ciudad, a los ${escapeHtml(d.fecha_firma_letras)}, se celebra el presente
+  contrato entre la EMPRESA DE PARQUES Y EVENTOS DE ANTIOQUIA — ACTIVA y el(la)
+  contratista <span class="label">${escapeHtml(d.nombre_contratista)}</span>,
+  identificado(a) con cédula de ciudadanía N° ${escapeHtml(d.cedula_contratista)}
+  expedida en ${escapeHtml(d.ciudad_expedicion_cc)}, correo electrónico
+  ${escapeHtml(d.email_contratista)}.</p>
+
+  <h2>PRIMERA. OBJETO</h2>
+  <p>${escapeHtml(d.objeto_contrato)}</p>
+
+  <h2>SEGUNDA. ACTIVIDADES</h2>
+  <ol>${actividades}</ol>
+
+  <h2>TERCERA. VALOR Y FORMA DE PAGO</h2>
+  <p>El valor total del contrato es de
+  $${Number(d.valor_total_numero).toLocaleString("es-CO")}
+  (${escapeHtml(d.valor_total_letras)}), pagaderos en mensualidades de
+  $${Number(d.valor_mensual_numero).toLocaleString("es-CO")}
+  (${escapeHtml(d.valor_mensual_letras)}).</p>
+
+  <h2>CUARTA. PLAZO</h2>
+  <p>${escapeHtml(d.plazo_texto)} Fecha de terminación: ${escapeHtml(d.fecha_terminacion)}.</p>
+
+  <h2>QUINTA. MARCO NORMATIVO Y PRESUPUESTAL</h2>
+  <p>Resolución N° ${escapeHtml(d.resolucion_numero)} del ${escapeHtml(d.resolucion_fecha)}.
+  CDP N° ${escapeHtml(d.cdp_numero)} del ${escapeHtml(d.cdp_fecha)}.
+  CRP N° ${escapeHtml(d.crp_numero)} del ${escapeHtml(d.crp_fecha)}.</p>
+
+  <h2>SEXTA. SUPERVISIÓN</h2>
+  <p>La supervisión estará a cargo de ${escapeHtml(d.supervisor_nombre)},
+  en su calidad de ${escapeHtml(d.supervisor_cargo)}.</p>
+
+  <br><br>
+  <p>_____________________________<br>${escapeHtml(d.nombre_contratista)}<br>Contratista</p>
+</body>
+</html>`;
+}
+
+function generarWord() {
+  if (!form.reportValidity()) return;
+
+  const data = recopilarDatos();
+  const html = construirDocumentoWord(data);
+  const blob = new Blob(["﻿", html], { type: "application/msword" });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Contrato_${(data.numero_contrato || "ACTIVA").replace(/\s+/g, "_")}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  mostrarMensaje("ok", "📄 Contrato (Word) generado. Revísalo, fírmalo y guárdalo como PDF para cargarlo.");
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  generarWord();
+});
+
+/* ============================================================
+   2) CARGAR CONTRATO (PDF) -> BASE64
+   ============================================================ */
+btnCargar.addEventListener("click", () => inputArchivo.click());
+
+inputArchivo.addEventListener("change", () => {
+  const file = inputArchivo.files[0];
+  if (!file) return;
+
+  if (file.type !== "application/pdf") {
+    mostrarMensaje("err", "❌ El archivo debe ser un PDF.");
+    inputArchivo.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    // reader.result -> "data:application/pdf;base64,XXXX"; tomamos solo el base64
+    pdfBase64 = reader.result.split(",")[1];
+    pdfNombre = file.name;
+    archivoInfo.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+    btnEnviar.disabled = false;
+    mostrarMensaje("ok", "✅ Contrato cargado. Ya puedes enviarlo a ACTIVA.");
+  };
+  reader.onerror = () => mostrarMensaje("err", "❌ No se pudo leer el archivo.");
+  reader.readAsDataURL(file);
+});
+
+/* ============================================================
+   3) ENVIAR A ACTIVA -> POST JSON (con PDF en base64)
+   ============================================================ */
+btnEnviar.addEventListener("click", async () => {
+  if (!form.reportValidity()) return;
+  if (!pdfBase64) {
+    mostrarMensaje("err", "❌ Primero debes cargar el contrato en PDF.");
+    return;
+  }
+
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = "Enviando...";
+  mensaje.style.display = "none";
+
+  const data = recopilarDatos();
+  data.archivo_nombre = pdfNombre;
+  data.archivo_pdf_base64 = pdfBase64;
+
   try {
     const resp = await fetch(POWER_AUTOMATE_URL, {
       method: "POST",
@@ -136,17 +287,18 @@ form.addEventListener("submit", async (e) => {
     });
     if (!resp.ok) throw new Error("HTTP " + resp.status);
 
-    mensaje.className = "ok";
-    mensaje.textContent = "✅ Contrato enviado correctamente a Power Automate.";
-    mensaje.style.display = "block";
+    mostrarMensaje("ok", "✅ Contrato enviado correctamente a ACTIVA.");
     form.reset();
     document.querySelectorAll(".preview").forEach(p => p.textContent = "Vista previa en letras…");
+    pdfBase64 = null;
+    pdfNombre = null;
+    inputArchivo.value = "";
+    archivoInfo.textContent = "";
+    btnEnviar.disabled = true;
   } catch (err) {
-    mensaje.className = "err";
-    mensaje.textContent = "❌ Error al enviar: " + err.message;
-    mensaje.style.display = "block";
+    mostrarMensaje("err", "❌ Error al enviar: " + err.message);
+    btnEnviar.disabled = false;
   } finally {
-    btn.disabled = false;
-    btn.textContent = "🚀 Generar contrato";
+    btnEnviar.textContent = "📤 Enviar a ACTIVA";
   }
 });

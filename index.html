@@ -141,7 +141,13 @@
     </fieldset>
 
     <div class="actions">
-      <button type="submit" id="btnEnviar">🚀 Generar contrato</button>
+      <button type="submit" id="btnGenerar">📄 Generar contrato (Word)</button>
+
+      <input type="file" id="archivoContrato" accept="application/pdf,.pdf" hidden>
+      <button type="button" id="btnCargar" class="btn-secondary">📎 Cargar contrato (PDF)</button>
+      <div id="archivoInfo" class="file-info"></div>
+
+      <button type="button" id="btnEnviar" class="btn-success" disabled>📤 Enviar a ACTIVA</button>
     </div>
     <div id="mensaje"></div>
   </form>
