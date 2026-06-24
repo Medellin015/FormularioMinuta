@@ -60,6 +60,10 @@
           <textarea id="objeto_contrato" name="objeto_contrato" placeholder="Describe el objeto del contrato…" required></textarea>
         </div>
         <div class="full">
+          <label for="alcance">Alcance</label>
+          <textarea id="alcance" name="alcance" placeholder="Describe el alcance de la contratación…" required></textarea>
+        </div>
+        <div class="full">
           <label for="actividades_principales">Principales actividades (una por línea)</label>
           <textarea id="actividades_principales" name="actividades_principales" rows="8" placeholder="1. Primera actividad&#10;2. Segunda actividad&#10;3. Tercera actividad" required></textarea>
         </div>
@@ -153,6 +157,9 @@
   </form>
 </div>
 
+<!-- Librerías para generar el Word a partir de la plantilla -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.7/pizzip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.50.0/docxtemplater.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
