@@ -1,8 +1,8 @@
 /* ============================================================
    CONFIGURACIÓN
    ============================================================ */
-// 🔧 Reemplaza con la URL HTTP POST del trigger de Power Automate
-const POWER_AUTOMATE_URL = "https://prod-XX.westus.logic.azure.com:443/workflows/XXXXXXXX/triggers/manual/paths/invoke?api-version=...";
+// URL HTTP POST del trigger de Power Automate
+const POWER_AUTOMATE_URL = "https://defaulte982e2ab16ea4111b3dff3a537f8d7.16.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/061c675a865642d6ad4ec251fa32e44a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=hoOXmRnCtcrG-Z1UEFC39LQdnrKsJRZiXVntRdvPk14";
 
 /* ============================================================
    CONVERSOR: NÚMERO A LETRAS (PESOS COLOMBIANOS)
