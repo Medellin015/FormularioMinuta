@@ -157,9 +157,15 @@
   </form>
 </div>
 
-<!-- Librerías para generar el Word a partir de la plantilla (locales, sin CDN) -->
-<script src="vendor/pizzip.min.js"></script>
-<script src="vendor/docxtemplater.min.js"></script>
+<!-- Librerías para generar el Word a partir de la plantilla (locales, sin CDN).
+     Las dependencias se fijan con Subresource Integrity (SRI): el navegador
+     rechaza el script si su hash no coincide. Ver vendor/VENDOR.md. -->
+<script src="vendor/pizzip.min.js"
+        integrity="sha384-XQtJZTVnqAq0NFD5n/9EXUu5+CRYAffTCptNzpB+5g3R4iug3g8jSc8XJkNCIcgF"
+        crossorigin="anonymous"></script>
+<script src="vendor/docxtemplater.min.js"
+        integrity="sha384-b7y7FzboK8nqhXi7AGaZPf2FLZIgvGb3rPMCModw572tDJwbPX8hlw0T+R+N7Uxn"
+        crossorigin="anonymous"></script>
 <script src="app.js"></script>
 </body>
 </html>
