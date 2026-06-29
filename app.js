@@ -36,26 +36,38 @@ function decenaALetras(n) {
   return DECENAS[d] + (u > 0 ? " Y " + UNIDADES[u] : "");
 }
 
-function numeroALetras(num) {
-  num = Math.floor(Math.abs(Number(num)));
-  if (isNaN(num)) return "";
-  if (num === 0) return "CERO PESOS M/L";
+// Convierte 0..999.999 a letras ("CIENTO VEINTITRÉS MIL CUATROCIENTOS…")
+function milesALetras(n) {
+  if (n === 0) return "";
+  const miles = Math.floor(n / 1000);
+  const resto = n % 1000;
+  let txt = "";
+  if (miles === 1) txt = "MIL";
+  else if (miles > 1) txt = centenaALetras(miles) + " MIL";
+  if (resto > 0) txt += (txt ? " " : "") + centenaALetras(resto);
+  return txt.trim();
+}
 
-  const millones = Math.floor(num / 1000000);
-  const miles = Math.floor((num % 1000000) / 1000);
-  const resto = num % 1000;
+function numeroALetras(num) {
+  num = Number(num);
+  if (isNaN(num)) return "";
+  num = Math.floor(num);
+  // Valores negativos no son válidos como dinero: se tratan como cero
+  // (coherente con la cifra que se muestra entre paréntesis).
+  if (num <= 0) return "CERO PESOS M/L";
+  // Fuera del rango razonable de un contrato (>= un billón); evita
+  // imprecisión de Number y un cuelgue del conversor.
+  if (num > 999999999999) return num.toLocaleString("es-CO") + " PESOS M/L";
 
   const partes = [];
+  const millones = Math.floor(num / 1000000);
+  const resto = num % 1000000;
 
   if (millones > 0) {
     if (millones === 1) partes.push("UN MILLÓN");
-    else partes.push(centenaALetras(millones) + " MILLONES");
+    else partes.push(milesALetras(millones) + " MILLONES");
   }
-  if (miles > 0) {
-    if (miles === 1) partes.push("MIL");
-    else partes.push(centenaALetras(miles) + " MIL");
-  }
-  if (resto > 0) partes.push(centenaALetras(resto));
+  if (resto > 0) partes.push(milesALetras(resto));
 
   return partes.join(" ").replace(/\s+/g, " ").trim() + " PESOS M/L";
 }
@@ -126,9 +138,10 @@ function mostrarMensaje(tipo, texto) {
 function recopilarDatos() {
   const data = Object.fromEntries(new FormData(form).entries());
 
-  // Conversiones automáticas
-  data.valor_total_numero = Number(data.valor_total_numero);
-  data.valor_mensual_numero = Number(data.valor_mensual_numero);
+  // Conversiones automáticas (enteros no negativos: misma base para
+  // las letras, la cifra mostrada y el JSON enviado)
+  data.valor_total_numero = Math.max(0, Math.floor(Number(data.valor_total_numero) || 0));
+  data.valor_mensual_numero = Math.max(0, Math.floor(Number(data.valor_mensual_numero) || 0));
   data.valor_total_letras = numeroALetras(data.valor_total_numero);
   data.valor_mensual_letras = numeroALetras(data.valor_mensual_numero);
   data.fecha_firma_letras = fechaALetras(data.fecha_firma_numero);
@@ -193,6 +206,18 @@ function datosPlantilla() {
    ============================================================ */
 const PLANTILLA_URL = "plantilla_contrato.docx";
 
+// fetch con timeout: aborta la petición si el servidor no responde a tiempo,
+// para que los spinners no queden colgados indefinidamente.
+async function fetchConTimeout(url, opciones = {}, ms = 30000) {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...opciones, signal: ctrl.signal });
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 async function generarWord() {
   if (!form.reportValidity()) return;
 
@@ -205,7 +230,7 @@ async function generarWord() {
   mostrarMensaje("ok", "⏳ Generando contrato…");
 
   try {
-    const resp = await fetch(PLANTILLA_URL);
+    const resp = await fetchConTimeout(PLANTILLA_URL, {}, 20000);
     if (!resp.ok) throw new Error("No se encontró la plantilla (" + resp.status + ")");
     const buffer = await resp.arrayBuffer();
 
@@ -230,9 +255,14 @@ async function generarWord() {
 
     mostrarMensaje("ok", "📄 Contrato (Word) generado. Revísalo, fírmalo y guárdalo como PDF para cargarlo.");
   } catch (err) {
-    const detalle = err.properties && err.properties.errors
-      ? err.properties.errors.map(e => e.properties.explanation).join("; ")
-      : err.message;
+    let detalle;
+    if (err.name === "AbortError") {
+      detalle = "la plantilla tardó demasiado en cargar. Revisa tu conexión e inténtalo de nuevo.";
+    } else if (err.properties && err.properties.errors) {
+      detalle = err.properties.errors.map(e => e.properties.explanation).join("; ");
+    } else {
+      detalle = err.message;
+    }
     mostrarMensaje("err", "❌ Error al generar el contrato: " + detalle);
   }
 }
@@ -253,6 +283,19 @@ inputArchivo.addEventListener("change", () => {
 
   if (file.type !== "application/pdf") {
     mostrarMensaje("err", "❌ El archivo debe ser un PDF.");
+    inputArchivo.value = "";
+    return;
+  }
+
+  if (file.size === 0) {
+    mostrarMensaje("err", "❌ El archivo PDF está vacío.");
+    inputArchivo.value = "";
+    return;
+  }
+
+  const MAX_PDF_MB = 10;
+  if (file.size > MAX_PDF_MB * 1024 * 1024) {
+    mostrarMensaje("err", `❌ El PDF supera el tamaño máximo permitido (${MAX_PDF_MB} MB).`);
     inputArchivo.value = "";
     return;
   }
@@ -289,11 +332,11 @@ btnEnviar.addEventListener("click", async () => {
   data.archivo_pdf_base64 = pdfBase64;
 
   try {
-    const resp = await fetch(POWER_AUTOMATE_URL, {
+    const resp = await fetchConTimeout(POWER_AUTOMATE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
-    });
+    }, 60000);
     if (!resp.ok) throw new Error("HTTP " + resp.status);
 
     mostrarMensaje("ok", "✅ Contrato enviado correctamente a ACTIVA.");
@@ -305,7 +348,15 @@ btnEnviar.addEventListener("click", async () => {
     archivoInfo.textContent = "";
     btnEnviar.disabled = true;
   } catch (err) {
-    mostrarMensaje("err", "❌ Error al enviar: " + err.message);
+    let texto;
+    if (err.name === "AbortError") {
+      texto = "La conexión tardó demasiado. Revisa tu red e inténtalo de nuevo.";
+    } else if (err.message && err.message.startsWith("HTTP")) {
+      texto = "El servidor de ACTIVA respondió con un error. Inténtalo de nuevo en unos minutos.";
+    } else {
+      texto = "No se pudo conectar con ACTIVA. Revisa tu conexión a internet.";
+    }
+    mostrarMensaje("err", "❌ Error al enviar: " + texto);
     btnEnviar.disabled = false;
   } finally {
     btnEnviar.textContent = "📤 Enviar a ACTIVA";
