@@ -193,11 +193,17 @@ function datosPlantilla() {
     valor_total_texto: `${d.valor_total_letras} ($${fmt(d.valor_total_numero)})`,
     valor_mensual_texto: `${d.valor_mensual_letras} ($${fmt(d.valor_mensual_numero)})`,
     plazo_texto: (d.plazo_texto || "").toUpperCase(),
+    supervisor_nombre: d.supervisor_nombre || "",
+    supervisor_cargo: d.supervisor_cargo || "",
     fecha_terminacion_texto: fechaLarga(d.fecha_terminacion),
     fecha_firma_letras: d.fecha_firma_letras || "",
     presupuesto_texto:
       `Certificado de Disponibilidad Presupuestal No ${d.cdp_numero} del ${fechaCorta(d.cdp_fecha)} ` +
-      `y Certificado de Registro Presupuestal No ${d.crp_numero} del ${fechaCorta(d.crp_fecha)}.`
+      `y Certificado de Registro Presupuestal No ${d.crp_numero} del ${fechaCorta(d.crp_fecha)}.`,
+    proyecto: d.proyecto || "",
+    revision_juridica: d.revision_juridica || "",
+    revision_financiera: d.revision_financiera || "",
+    aprobo: d.aprobo || ""
   };
 }
 
