@@ -1,23 +1,31 @@
 # FormularioMinuta
 
-Generador de contratos para **ACTIVA** (Empresa de Parques y Eventos de Antioquia).
-Aplicación web estática (HTML/CSS/JS) que:
+Generador de documentos para **ACTIVA** (Empresa de Parques y Eventos de Antioquia).
+Aplicación web estática (HTML/CSS/JS) con dos páginas:
 
+**Generador de Contrato** (`index.html`):
 1. **Genera** un contrato en Word (`.docx`) rellenando una plantilla oficial
    (`plantilla_contrato.docx`) con los datos del formulario, usando
    [docxtemplater](https://docxtemplater.com/) + [PizZip](https://github.com/open-xml-templating/pizzip).
 2. Permite **cargar** el contrato ya firmado en PDF.
 3. **Envía** los datos y el PDF (en base64) a un flujo de **Power Automate**.
 
+**Estudio Previo** (`estudio_previo.html`):
+1. **Genera** el estudio previo de prestación de servicios (formato SBSF28) en
+   Word, rellenando `plantilla_estudio_previo.docx` con los datos del formulario.
+
 ## Estructura
 
-| Archivo                   | Descripción                                            |
-|---------------------------|--------------------------------------------------------|
-| `index.html`              | Formulario y carga de librerías                        |
-| `app.js`                  | Lógica: conversión a letras, generación y envío        |
-| `styles.css`              | Estilos                                                |
-| `plantilla_contrato.docx` | Plantilla oficial con marcadores `{campo}`             |
-| `vendor/`                 | Librerías locales fijadas con SRI (ver `vendor/VENDOR.md`) |
+| Archivo                          | Descripción                                            |
+|----------------------------------|--------------------------------------------------------|
+| `index.html`                     | Formulario del contrato                                |
+| `app.js`                         | Lógica del contrato: letras, generación y envío        |
+| `estudio_previo.html`            | Formulario del estudio previo (SBSF28)                 |
+| `estudio.js`                     | Lógica del estudio previo: letras y generación         |
+| `styles.css`                     | Estilos compartidos                                    |
+| `plantilla_contrato.docx`        | Plantilla del contrato con marcadores `{campo}`        |
+| `plantilla_estudio_previo.docx`  | Plantilla del estudio previo con marcadores `{campo}`  |
+| `vendor/`                        | Librerías locales fijadas con SRI (ver `vendor/VENDOR.md`) |
 
 ## Despliegue
 
