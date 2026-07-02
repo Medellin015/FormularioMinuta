@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudio Previo — ACTIVA</title>
+<link rel="icon" type="image/png" href="logo_activa.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="header-text">
+      <h1>📋 Estudio Previo — Prestación de servicios</h1>
+      <p>Empresa de Parques y Eventos de Antioquia — ACTIVA</p>
+      <nav class="nav-links"><a href="index.html">← Ir al Generador de Contrato</a></nav>
+    </div>
+    <img src="logo_activa.png" alt="ACTIVA — Empresa de Parques y Eventos de Antioquia" class="header-logo">
+  </header>
+
+  <form id="estudioForm">
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">1</span> Datos generales del proceso</legend>
+      <div class="grid">
+        <div>
+          <label for="modalidad_contractual">Modalidad contractual</label>
+          <input type="text" id="modalidad_contractual" name="modalidad_contractual" placeholder="Ej: Contratación directa — Prestación de servicios" required>
+        </div>
+        <div>
+          <label for="identificacion_contrato">Identificación del contrato a celebrar</label>
+          <input type="text" id="identificacion_contrato" name="identificacion_contrato" placeholder="Ej: Contrato de prestación de servicios profesionales" required>
+        </div>
+        <div class="full">
+          <label for="objeto">Objeto</label>
+          <textarea id="objeto" name="objeto" placeholder="Describe el objeto del proceso…" required></textarea>
+        </div>
+        <div class="full">
+          <label for="alcance">Alcance del objeto contractual</label>
+          <textarea id="alcance" name="alcance" placeholder="Describe el alcance…" required></textarea>
+        </div>
+        <div>
+          <label for="plazo">Plazo</label>
+          <input type="text" id="plazo" name="plazo" placeholder="Ej: Desde la suscripción del acta de inicio hasta el 30 de junio de 2026" required>
+        </div>
+        <div>
+          <label for="lugar_ejecucion">Lugar de ejecución o entrega</label>
+          <input type="text" id="lugar_ejecucion" name="lugar_ejecucion" placeholder="Ej: Medellín, Antioquia" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">2</span> Cliente y contexto</legend>
+      <div class="grid">
+        <div>
+          <label for="cliente">Cliente</label>
+          <input type="text" id="cliente" name="cliente" placeholder="Ej: Gobernación de Antioquia" required>
+        </div>
+        <div>
+          <label for="contrato_interadministrativo">Contrato interadministrativo</label>
+          <input type="text" id="contrato_interadministrativo" name="contrato_interadministrativo" placeholder="Ej: 4600012345 de 2026" required>
+        </div>
+        <div class="full">
+          <label for="medio_satisfaccion">La necesidad se satisface mediante…</label>
+          <input type="text" id="medio_satisfaccion" name="medio_satisfaccion" placeholder="Ej: un contrato de prestación de servicios profesionales" required>
+        </div>
+        <div>
+          <label for="op_numero">OP N°</label>
+          <input type="text" id="op_numero" name="op_numero" placeholder="Ej: OP-2026-014" required>
+        </div>
+        <div>
+          <label for="op_emisor">OP emitida por</label>
+          <input type="text" id="op_emisor" name="op_emisor" placeholder="Ej: Gerencia de Proyectos" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">3</span> Perfil requerido</legend>
+      <div class="grid">
+        <div>
+          <label for="perfil_profesional">Profesional requerido (perfil)</label>
+          <input type="text" id="perfil_profesional" name="perfil_profesional" placeholder="Ej: Ingeniero de sistemas" required>
+        </div>
+        <div>
+          <label for="experiencia_anios">Experiencia mínima (años, en letras y número)</label>
+          <input type="text" id="experiencia_anios" name="experiencia_anios" placeholder="Ej: dos (2)" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">4</span> Presupuesto y forma de pago</legend>
+      <div class="grid">
+        <div>
+          <label for="presupuesto_numero">Presupuesto oficial (número)</label>
+          <input type="number" id="presupuesto_numero" name="presupuesto_numero" placeholder="Ej: 29580000" min="0" required>
+          <div class="preview" id="prev_presupuesto">Vista previa en letras…</div>
+        </div>
+        <div>
+          <label for="valor_mensual_numero">Honorarios mensuales (número)</label>
+          <input type="number" id="valor_mensual_numero" name="valor_mensual_numero" placeholder="Ej: 5100000" min="0" required>
+          <div class="preview" id="prev_valor_mensual">Vista previa en letras…</div>
+        </div>
+        <div>
+          <label for="dias_pago">Días hábiles para el pago (letras y número)</label>
+          <input type="text" id="dias_pago" name="dias_pago" placeholder="Ej: quince (15)" required>
+        </div>
+      </div>
+      <p class="hint">Certificado de Disponibilidad Presupuestal (CDP) que ampara el proceso:</p>
+      <div class="grid">
+        <div>
+          <label for="cdp_codigo">Código del rubro</label>
+          <input type="text" id="cdp_codigo" name="cdp_codigo" placeholder="Ej: 2.1.2.02.02.008" required>
+        </div>
+        <div>
+          <label for="cdp_rubro">Nombre del rubro</label>
+          <input type="text" id="cdp_rubro" name="cdp_rubro" placeholder="Ej: Servicios prestados a las empresas" required>
+        </div>
+        <div>
+          <label for="cdp_numero">CDP N°</label>
+          <input type="text" id="cdp_numero" name="cdp_numero" placeholder="Ej: 004-2026" required>
+        </div>
+        <div>
+          <label for="cdp_fecha">Fecha CDP</label>
+          <input type="date" id="cdp_fecha" name="cdp_fecha" required>
+        </div>
+        <div>
+          <label for="cdp_valor">Valor CDP (número)</label>
+          <input type="number" id="cdp_valor" name="cdp_valor" placeholder="Ej: 29580000" min="0" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">5</span> Actividades, entregables y especificaciones</legend>
+      <div class="grid">
+        <div class="full">
+          <label for="actividades_principales">Principales actividades (una por línea)</label>
+          <textarea id="actividades_principales" name="actividades_principales" rows="6" placeholder="1. Primera actividad&#10;2. Segunda actividad" required></textarea>
+        </div>
+        <div class="full">
+          <label for="entregables">Entregables (uno por línea)</label>
+          <textarea id="entregables" name="entregables" rows="4" placeholder="Informe mensual de actividades&#10;Evidencias de ejecución" required></textarea>
+        </div>
+        <div>
+          <label for="espec_cantidad">Especificaciones técnicas — cantidad</label>
+          <input type="text" id="espec_cantidad" name="espec_cantidad" placeholder="Ej: 1" required>
+        </div>
+        <div>
+          <label for="espec_descripcion">Especificaciones técnicas — descripción</label>
+          <input type="text" id="espec_descripcion" name="espec_descripcion" placeholder="Ej: Servicios profesionales de apoyo a la gestión" required>
+        </div>
+        <div>
+          <label for="unspsc_nivel">UNSPSC — nivel</label>
+          <input type="text" id="unspsc_nivel" name="unspsc_nivel" placeholder="Ej: 3" required>
+        </div>
+        <div>
+          <label for="unspsc_codigo">UNSPSC — código</label>
+          <input type="text" id="unspsc_codigo" name="unspsc_codigo" placeholder="Ej: 80111600" required>
+        </div>
+        <div class="full">
+          <label for="unspsc_descripcion">UNSPSC — descripción</label>
+          <input type="text" id="unspsc_descripcion" name="unspsc_descripcion" placeholder="Ej: Servicios de personal temporal" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">6</span> Obligaciones de las partes</legend>
+      <div class="grid">
+        <div class="full">
+          <label for="obligaciones_intro">Introducción de obligaciones (opcional)</label>
+          <textarea id="obligaciones_intro" name="obligaciones_intro" rows="2" placeholder="Texto introductorio (puede dejarse vacío)"></textarea>
+        </div>
+        <div class="full">
+          <label for="obligaciones_generales">Obligaciones generales de las partes (una por línea, numeradas)</label>
+          <textarea id="obligaciones_generales" name="obligaciones_generales" rows="4" placeholder="1. Primera obligación&#10;2. Segunda obligación" required></textarea>
+        </div>
+        <div class="full">
+          <label for="obligaciones_contratista">Obligaciones del contratista (una por línea)</label>
+          <textarea id="obligaciones_contratista" name="obligaciones_contratista" rows="5" placeholder="Prestar el servicio con autonomía…&#10;Presentar informes mensuales…" required></textarea>
+        </div>
+        <div class="full">
+          <label for="obligaciones_contratante">Obligaciones de ACTIVA (una por línea)</label>
+          <textarea id="obligaciones_contratante" name="obligaciones_contratante" rows="4" placeholder="Pagar los honorarios pactados…&#10;Suministrar la información necesaria…" required></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">7</span> Análisis de riesgos</legend>
+      <div class="grid">
+        <div>
+          <label for="riesgo">Riesgo</label>
+          <input type="text" id="riesgo" name="riesgo" placeholder="Ej: Incumplimiento de las obligaciones" required>
+        </div>
+        <div>
+          <label for="riesgo_etapa">Etapa</label>
+          <input type="text" id="riesgo_etapa" name="riesgo_etapa" placeholder="Ej: Ejecución" required>
+        </div>
+        <div>
+          <label for="riesgo_nivel">Nivel</label>
+          <input type="text" id="riesgo_nivel" name="riesgo_nivel" placeholder="Ej: Bajo" required>
+        </div>
+        <div>
+          <label for="riesgo_tratamiento">Tratamiento</label>
+          <input type="text" id="riesgo_tratamiento" name="riesgo_tratamiento" placeholder="Ej: Supervisión permanente del contrato" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">8</span> Garantías</legend>
+      <div class="grid">
+        <div class="full">
+          <label for="entidad_beneficiaria">Entidad beneficiaria adicional (junto a ACTIVA)</label>
+          <input type="text" id="entidad_beneficiaria" name="entidad_beneficiaria" placeholder="Ej: la Gobernación de Antioquia" required>
+        </div>
+        <div>
+          <label for="garantia_tomador">Tomador</label>
+          <input type="text" id="garantia_tomador" name="garantia_tomador" placeholder="Ej: El contratista" required>
+        </div>
+        <div>
+          <label for="garantia_asegurados">Asegurados (adicionales)</label>
+          <input type="text" id="garantia_asegurados" name="garantia_asegurados" placeholder="Ej: El contratista" required>
+        </div>
+        <div>
+          <label for="amparo">Amparo</label>
+          <input type="text" id="amparo" name="amparo" placeholder="Ej: Cumplimiento del contrato" required>
+        </div>
+        <div>
+          <label for="amparo_porcentaje">Porcentaje</label>
+          <input type="text" id="amparo_porcentaje" name="amparo_porcentaje" placeholder="Ej: 10% del valor del contrato" required>
+        </div>
+        <div class="full">
+          <label for="amparo_duracion">Duración</label>
+          <input type="text" id="amparo_duracion" name="amparo_duracion" placeholder="Ej: Vigencia del contrato y cuatro (4) meses más" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">9</span> Supervisión</legend>
+      <div class="grid">
+        <div>
+          <label for="tipo_supervision">Tipo</label>
+          <select id="tipo_supervision" name="tipo_supervision" required>
+            <option value="supervisión">Supervisión</option>
+            <option value="interventoría">Interventoría</option>
+          </select>
+        </div>
+        <div>
+          <label for="supervisor_nombre">Nombre del supervisor/interventor</label>
+          <input type="text" id="supervisor_nombre" name="supervisor_nombre" placeholder="Ej: David Castañeda Villegas" required>
+        </div>
+        <div class="full">
+          <label for="supervisor_area">Profesional de… (área)</label>
+          <input type="text" id="supervisor_area" name="supervisor_area" placeholder="Ej: la Gerencia Comercial" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend class="section-title"><span class="num">10</span> Responsables del documento</legend>
+      <div class="grid">
+        <div>
+          <label for="cargo_area_interesada">Cargo — responsable del área interesada</label>
+          <input type="text" id="cargo_area_interesada" name="cargo_area_interesada" placeholder="Ej: Gestor Comercial" required>
+        </div>
+        <div>
+          <label for="cargo_area_financiera">Cargo — responsable del área financiera</label>
+          <input type="text" id="cargo_area_financiera" name="cargo_area_financiera" placeholder="Ej: Profesional Financiero" required>
+        </div>
+        <div>
+          <label for="cargo_area_juridica">Cargo — responsable del área jurídica</label>
+          <input type="text" id="cargo_area_juridica" name="cargo_area_juridica" placeholder="Ej: Asesor Jurídico" required>
+        </div>
+        <div>
+          <label for="proyecto">Proyectó (nombre y cargo)</label>
+          <input type="text" id="proyecto" name="proyecto" placeholder="Ej: Ana Pérez — Profesional de Apoyo" required>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="btnGenerar">📋 Generar estudio previo (Word)</button>
+    </div>
+    <div id="mensaje"></div>
+  </form>
+</div>
+
+<!-- Librerías para generar el Word a partir de la plantilla (locales, sin CDN).
+     Fijadas con Subresource Integrity (SRI). Ver vendor/VENDOR.md. -->
+<script src="vendor/pizzip.min.js"
+        integrity="sha384-XQtJZTVnqAq0NFD5n/9EXUu5+CRYAffTCptNzpB+5g3R4iug3g8jSc8XJkNCIcgF"
+        crossorigin="anonymous"></script>
+<script src="vendor/docxtemplater.min.js"
+        integrity="sha384-b7y7FzboK8nqhXi7AGaZPf2FLZIgvGb3rPMCModw572tDJwbPX8hlw0T+R+N7Uxn"
+        crossorigin="anonymous"></script>
+<script src="estudio.js"></script>
+</body>
+</html>
